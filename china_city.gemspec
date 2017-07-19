@@ -21,14 +21,14 @@ Gem::Specification.new do |s|
   # s.add_dependency "rails", "~> 4.0"
   # s.add_dependency "jquery-rails", "~> 3"
 
-  s.add_development_dependency "rails", "~> 4.0"
-  s.add_development_dependency "jquery-rails", "~> 4"
+  s.add_development_dependency "rails", "~> 5.1"
+  s.add_development_dependency "jquery-rails", "~> 4.3"
   s.add_development_dependency "sqlite3", '~> 1.3'
   s.add_development_dependency "rspec-rails", '~> 2.14'
-  s.add_development_dependency "coffee-rails", '~> 4.1'
+  s.add_development_dependency "coffee-rails", '~> 4.2'
   s.add_development_dependency 'capybara'
   s.add_development_dependency 'launchy'
-  s.add_development_dependency 'poltergeist', '~> 1.8'
+  s.add_development_dependency 'poltergeist', '~> 1.15'
   s.add_development_dependency 'GB2260'
   s.add_development_dependency 'httparty'
   s.add_development_dependency "json"
