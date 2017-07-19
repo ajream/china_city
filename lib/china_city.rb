@@ -117,6 +117,51 @@ module ChinaCity
       @list
     end
 
+    # 根据省的名称返回相关的地区信息
+    def get_by_name(name)
+      return '' if name.blank?
+      children = zh_data
+      return children[name] if children.has_key?(name) # 省的编码
+      return []
+    end
+
+    def zh_data
+      unless @zh_list
+        @zh_list = {}
+        json = JSON.parse(File.read("#{Engine.root}/db/areas.json"))
+        streets = json.values.flatten
+        streets.each do |street| 
+          id = street['id']
+          text = street['text']
+          sensitive_areas = street['sensitive_areas'] || false
+          if id.size == 6    # 省市区
+            if id.end_with?('0000')                           # 省
+              @zh_list[text] =  {:id => id, :sensitive_areas => sensitive_areas, :children => {}}
+            elsif id.end_with?('00')  
+              province_text = get(province(id))                 # 市
+              @zh_list[province_text] = {:text => nil, :children => {}} unless @zh_list.has_key?(province_text)
+              @zh_list[province_text][:children][text] = {:id => id, :sensitive_areas => sensitive_areas, :children => {}}
+            else
+              province_text = get(province(id))
+              city_text = get(city(id))
+              @zh_list[province_text] = {:id => id, :sensitive_areas => sensitive_areas, :children => {}} unless @zh_list.has_key?(province_text)
+              @zh_list[province_text][:children][city_text] = {:id => id, :sensitive_areas => sensitive_areas, :children => {}} unless @zh_list[province_text][:children].has_key?(city_text)
+              @zh_list[province_text][:children][city_text][:children][text] = {:id => id, :sensitive_areas => sensitive_areas, :children => {}}
+            end
+          else               # 街道
+            province_text = get(province(id))
+            city_text = get(city(id))
+            district_text = get(district(id))
+            @zh_list[province_text] = {:text => text, :sensitive_areas => sensitive_areas, :children => {}} unless @zh_list.has_key?(province_text)
+            @zh_list[province_text][:children][city_text] = {:id => id, :sensitive_areas => sensitive_areas, :children => {}} unless @zh_list[province_text][:children].has_key?(city_text)
+            @zh_list[province_text][:children][city_text][:children][district_text] = {:id => id, :sensitive_areas => sensitive_areas, :children => {}} unless @zh_list[province_text][:children][city_text][:children].has_key?(district_text)
+            @zh_list[province_text][:children][city_text][:children][district_text][:children][text] = {:id => id, :sensitive_areas => sensitive_areas}
+          end
+        end
+      end
+      @zh_list
+    end
+
     def match(code)
       code.match(PATTERN)
     end
