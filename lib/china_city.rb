@@ -119,6 +119,7 @@ module ChinaCity
 
     # 根据省的名称返对应 id
     def get_id_by_name(short_name)
+      return '' if short_name.blank?
       JSON_FILE["province"].each do |province|
         break province['id'] if province['text'].start_with?(short_name)
       end
